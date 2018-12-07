@@ -37,10 +37,10 @@ static const char *TagUDP = "UDP client";
 
 
 
-//static void vGMT_get_offset(void *pvParameters)
-//{
+static void vGMT_get_offset(void *pvParameters)
+{
 
-//} 
+} 
 
 //returns -1 if failed 
 int UDP_client(char *data_buffer)
