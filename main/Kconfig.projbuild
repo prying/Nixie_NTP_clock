@@ -1,0 +1,20 @@
+menu "STA Configuration"
+
+config ESP_WIFI_SSID
+    string "WiFi SSID"
+    default "myssid"
+    help
+	SSID (network name).
+
+config ESP_WIFI_PASSWORD
+    string "WiFi Password"
+    default "mypassword"
+    help
+	WiFi password (WPA or WPA2).
+		
+config MAX_STA_CONN
+    int "Maximal STA connections"
+    default 4
+    help
+	Max number of the STA connects to AP.
+endmenu
