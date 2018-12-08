@@ -19,6 +19,7 @@
 
 #include "app_wifi.h"
 #include "app_rtc.h"
+#include "gmtoffset.h"
 
 
 #define NTP_PACKET_SIZE 48
@@ -27,8 +28,16 @@
 #define UDP_PORT 123
 #define UNIX_OFFSET 2208988800UL
 
+#define HTTP_REQUEST_URI "/v2/get-time-zone?key=2ZVJKMES2VF7&format=json&fields=gmtOffset,dst&by=zone&zone=Australia/Melbourne"
+#define HTTP_REQUEST_DOMAIN_NAME "api.timezonedb.com"
 // 
 static const char *ntpServerAddress = "pool.ntp.org";
+static const char* HTTPheader = 
+"GET " HTTP_REQUEST_URI " HTTP/1.1\r\n"
+"Host: "HTTP_REQUEST_DOMAIN_NAME"\r\n"
+"Accept: */*\r\n"
+"\r\n";
+//"User-Agent: Mozilla/5.0 (compatible; Rigor/1.0.0; http://rigor.com)"
 
 //log tags
 static const char *TagUDP = "UDP client";
@@ -39,7 +48,7 @@ static const char *TagUDP = "UDP client";
 
 static void vGMT_get_offset(void *pvParameters)
 {
-
+    
 } 
 
 //returns -1 if failed 
@@ -174,8 +183,10 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     app_wifi_sta_start();
-    app_rtc_start();
-    xTaskCreate(&vNTP_Time, "vNTP_time", 4048, NULL, 1, NULL);
-    xTaskCreate(&vDisplay_time, "vDisplay_time", 2048, NULL, 1, NULL);
+    int tempint = 3;
+    get_GMT_offset(HTTPheader, &tempint);
+    //app_rtc_start();
+    //xTaskCreate(&vNTP_Time, "vNTP_time", 4048, NULL, 1, NULL);
+    //xTaskCreate(&vDisplay_time, "vDisplay_time", 2048, NULL, 1, NULL);
 
 }

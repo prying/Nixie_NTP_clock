@@ -4,6 +4,5 @@
 #
 
 PROJECT_NAME := Nixie_NTP_clock
-#include /home/prying/esp/esp-idf/tools/cmake/project.mk
 include $(IDF_PATH)/make/project.mk
 
