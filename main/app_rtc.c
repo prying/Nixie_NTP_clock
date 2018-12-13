@@ -21,6 +21,7 @@
 
 #define MODE_24_HR true
 
+//event group bit defines
 #define BIT_0 (1 << 0)
 #define BIT_1 (1 << 1)
 
