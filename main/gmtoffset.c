@@ -17,6 +17,8 @@
 
 #define NODE_NAME "api.timezonedb.com" // web server
 
+#define STATUS_OK "Ok"
+
 static const char* tag = "HTTP request";
 
 int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
@@ -27,6 +29,7 @@ int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
     char recvBuff[BUFF_SIZE];
     struct in_addr *addr;
     char *serPtr;
+    
 
     memset(&hints, 0, sizeof(hints));
     hints.ai_socktype = SOCK_STREAM;    //connection type socket 
@@ -77,12 +80,29 @@ int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
         close(fd);
         return 4;
     }
-
+    
     ESP_LOGI(tag,"ready to recive");
     err = recv(fd, recvBuff, sizeof(recvBuff), 0);
     
-    serPtr = strstr(recvBuff, "\r\n\r\n");
-    printf("%s\n", serPtr);
+    //remove HTTP header 
+    serPtr = strstr(recvBuff, "\r\n\r\n"); 
+    if (serPtr)
+    {
+        serPtr += 4;
+    }
+    char status[10];
+    int Offset;
+    //check status
+    //char *tmp = strstr(serPtr, '{');
+    int cont = sscanf(serPtr, "%*[^{] {\"status\":\"%[^\"]\",%*[^,],\"gmtOffset\": %d, %*[^}]", status, &Offset);
+    
+    //error check with cont needed
+
+    //preusme it is always correct 
+    if(status == STATUS_OK)
+    {
+        *gmtOffset = Offset;
+    }
 
     close(fd);
     return 0;
