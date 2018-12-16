@@ -97,7 +97,7 @@ int get_GMT_offset(const char *HTTPheader, int *gmtOffset)
     //error check with cont needed
 
     //preusme it is always correct
-    if (status == STATUS_OK)
+    if (strcmp(status, STATUS_OK))
     {
         *gmtOffset = Offset;
     }
