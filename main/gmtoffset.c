@@ -10,7 +10,6 @@
 
 #include "app_wifi.h"
 
-
 #define SERVER_PORT "80" //needs to be a char
 
 #define BUFF_SIZE 256
@@ -19,29 +18,28 @@
 
 #define STATUS_OK "Ok"
 
-static const char* tag = "HTTP request";
+static const char *tag = "HTTP request";
 
-int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
+int get_GMT_offset(const char *HTTPheader, int *gmtOffset)
 {
     //create TCP socket
-    int fd, err =0;
-    struct addrinfo hints, *results; 
+    int fd, err = 0;
+    struct addrinfo hints, *results;
     char recvBuff[BUFF_SIZE];
     struct in_addr *addr;
     char *serPtr;
-    
 
     memset(&hints, 0, sizeof(hints));
-    hints.ai_socktype = SOCK_STREAM;    //connection type socket 
-    hints.ai_family = AF_UNSPEC;        //IPv4 or IPv6;
+    hints.ai_socktype = SOCK_STREAM; //connection type socket
+    hints.ai_family = AF_UNSPEC;     //IPv4 or IPv6;
 
-    //Get server info 
+    //Get server info
     app_wifi_wait_IPv4();
     err = getaddrinfo(NODE_NAME, SERVER_PORT, &hints, &results);
     if (err != 0)
     {
         //error
-        ESP_LOGE(tag, "getaddringo: %d",err);
+        ESP_LOGE(tag, "getaddringo: %d", err);
         freeaddrinfo(results);
         return 1;
     }
@@ -55,20 +53,20 @@ int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
         ESP_LOGE(tag, "Failed to create socket");
         freeaddrinfo(results);
         close(fd);
-        return 2; //failed to get new offset condition 
+        return 2; //failed to get new offset condition
     }
 
-    //connect to server 
+    //connect to server
     err = connect(fd, results->ai_addr, results->ai_addrlen);
     if (err == -1)
     {
-        //failed to connect to the server 
+        //failed to connect to the server
         ESP_LOGE(tag, "Failed to connect to server");
         freeaddrinfo(results);
         close(fd);
         return 3;
     }
-    
+
     freeaddrinfo(results);
     //send the HTTP header to the target server
     int headerLength = strlen(HTTPheader);
@@ -80,12 +78,12 @@ int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
         close(fd);
         return 4;
     }
-    
-    ESP_LOGI(tag,"ready to recive");
+
+    ESP_LOGI(tag, "ready to recive");
     err = recv(fd, recvBuff, sizeof(recvBuff), 0);
-    
-    //remove HTTP header 
-    serPtr = strstr(recvBuff, "\r\n\r\n"); 
+
+    //remove HTTP header
+    serPtr = strstr(recvBuff, "\r\n\r\n");
     if (serPtr)
     {
         serPtr += 4;
@@ -95,15 +93,18 @@ int get_GMT_offset(const char * HTTPheader, int* gmtOffset)
     //check status
     //char *tmp = strstr(serPtr, '{');
     int cont = sscanf(serPtr, "%*[^{] {\"status\":\"%[^\"]\",%*[^,],\"gmtOffset\": %d, %*[^}]", status, &Offset);
-    
+
     //error check with cont needed
 
-    //preusme it is always correct 
-    if(status == STATUS_OK)
+    //preusme it is always correct
+    if (status == STATUS_OK)
     {
         *gmtOffset = Offset;
     }
-
+    else
+    {
+        //add fail condition 
+    }
     close(fd);
     return 0;
 }
