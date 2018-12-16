@@ -25,7 +25,7 @@
 #define BIT_0 (1 << 0)
 #define BIT_1 (1 << 1)
 
-//eventgroup 
+//eventgroup
 static EventGroupHandle_t eventgroup_time;
 static const int RTC_SETUP = BIT_0;
 static const int RTC_I2C_READY_USE = BIT_1;
@@ -40,9 +40,9 @@ static int SCL = I2C_SCL_PIN;
 static uint8_t ADDR = I2C_RTC_ADDR;
 static bool mode_24_HR = MODE_24_HR;
 
+//get the data from the regeister and return it
 uint8_t get_from_register(uint8_t reg)
 {
-    //get the data from the regeister and return it
     uint8_t data;
 
     xEventGroupWaitBits(eventgroup_time, RTC_I2C_READY_USE, pdTRUE, pdTRUE, portMAX_DELAY);
@@ -71,7 +71,7 @@ void app_rtc_start()
         ESP_LOGE(tag, "Failed to create eventgroup");
         abort();
     }
-    
+
     //configure the i2c driver
     i2c_cfg.mode = I2C_MODE_MASTER;
     i2c_cfg.sda_io_num = SDA;
