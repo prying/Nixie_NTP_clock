@@ -37,7 +37,6 @@ static const char* HTTPheader =
 "Host: "HTTP_REQUEST_DOMAIN_NAME"\r\n"
 "Accept: */*\r\n"
 "\r\n";
-//"User-Agent: Mozilla/5.0 (compatible; Rigor/1.0.0; http://rigor.com)"
 
 //log tags
 static const char *TagUDP = "UDP client";
@@ -183,8 +182,7 @@ void app_main(void)
     ESP_ERROR_CHECK(ret);
 
     app_wifi_sta_start();
-    int tempint = 3;
-    get_GMT_offset(HTTPheader, &tempint);
+    
     //app_rtc_start();
     //xTaskCreate(&vNTP_Time, "vNTP_time", 4048, NULL, 1, NULL);
     //xTaskCreate(&vDisplay_time, "vDisplay_time", 2048, NULL, 1, NULL);
